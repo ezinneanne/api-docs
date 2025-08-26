@@ -1,0 +1,52 @@
+name: Update API Documentation
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'spec/openapi.yaml' # Trigger only when the spec changes
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      # Step 1: Checkout the repository
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Step 2: Validate OpenAPI spec
+      - name: Validate OpenAPI Spec
+        uses: swagger-api/validator-action@v1
+        with:
+          file: spec/openapi.yaml
+
+      # Step 3: Set up Node.js (for Redoc CLI)
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      # Step 4: Install Redoc CLI
+      - name: Install Redoc CLI
+        run: npm install -g @redocly/cli
+
+      # Step 5: Generate static HTML with Redoc
+      - name: Generate Documentation
+        run: redocly build-docs spec/openapi.yaml --output docs/index.html
+
+      # Step 6: Deploy to GitHub Pages
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./docs
+
+      # Step 7: Send Slack Notification
+      - name: Notify Slack
+        if: success()
+        uses: slackapi/slack-github-action@v1.27.0
+        with:
+          slack-bot-token: ${{ secrets.SLACK_BOT_TOKEN }}
+          channel-id: 'C01R27LF962'
+          text: 'API Documentation updated successfully! View at ${{ github.event.repository.html_url }}/pages'
