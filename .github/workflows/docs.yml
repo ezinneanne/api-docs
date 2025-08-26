@@ -33,7 +33,7 @@ jobs:
 
       # Step 5: Generate Documentation (bundled single HTML)
       - name: Generate Documentation
-        run: npx @redocly/cli build-docs spec/openapi.yaml -o docs/index.html --output=bundled
+        run: npx @redocly/cli build-docs spec/openapi.yaml -o docs/index.html
 
 
       # Step 6: Deploy to GitHub Pages
