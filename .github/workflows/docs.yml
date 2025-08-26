@@ -31,10 +31,13 @@ jobs:
       - name: Install Redoc CLI
         run: npm install -g @redocly/cli
 
-      # Step 5: Generate Documentation (single file)
-      - name: Generate Documentation (single file)
-        run: redocly build-docs spec/openapi.yaml -o docs/index.html --output-type bundled
-        
+      # Step 5: Generate Documentation (HTML only)
+      - name: Generate Documentation
+        run: redocly build-docs spec/openapi.yaml -o docs/index.html
+
+      # Step 5b: Copy OpenAPI Spec into docs/ so it's published too
+      - name: Copy OpenAPI Spec
+        run: cp spec/openapi.yaml docs/openapi.yaml
 
       # Step 6: Deploy to GitHub Pages
       - name: Deploy to GitHub Pages
