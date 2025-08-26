@@ -87,6 +87,7 @@ paths:
                     type: string
                     example: "Missing or invalid API key."
 
+
 components:
   securitySchemes:
     api_key:
