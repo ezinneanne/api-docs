@@ -31,9 +31,10 @@ jobs:
       - name: Install Redoc CLI
         run: npm install -g @redocly/cli
 
-      # Step 5: Generate static HTML with Redoc
-      - name: Generate Documentation
-        run: redocly build-docs spec/openapi.yaml --output docs/index.html
+      # Step 5: Generate Documentation (single file)
+      - name: Generate Documentation (single file)
+        run: redocly build-docs spec/openapi.yaml -o docs/index.html --output-type bundled
+        
 
       # Step 6: Deploy to GitHub Pages
       - name: Deploy to GitHub Pages
