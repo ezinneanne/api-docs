@@ -5,7 +5,7 @@ on:
     branches:
       - main
     paths:
-      - 'spec/openapi.yaml' # Trigger only when the spec changes
+      - 'spec/openapi.yaml'
 
 jobs:
   build-and-deploy:
@@ -21,29 +21,18 @@ jobs:
         with:
           file: spec/openapi.yaml
 
-      # Step 3: Set up Node.js (for Redoc CLI)
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
+      # Step 3: Copy spec to docs folder
+      - name: Copy spec file
+        run: cp spec/openapi.yaml docs/openapi.yaml
 
-      # Step 4: Install Redoc CLI
-      - name: Install Redoc CLI
-        run: npm install -g @redocly/cli
-
-      # Step 5: Generate Documentation (bundled single HTML)
-      - name: Generate Documentation
-        run: npx @redocly/cli build-docs spec/openapi.yaml -o docs/index.html
-
-
-      # Step 6: Deploy to GitHub Pages
+      # Step 4: Deploy to GitHub Pages
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./docs
 
-      # Step 7: Send Slack Notification
+      # Step 5: Send Slack Notification
       - name: Notify Slack
         if: success()
         uses: slackapi/slack-github-action@v1.27.0
