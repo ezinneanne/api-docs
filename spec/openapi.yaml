@@ -65,7 +65,7 @@ paths:
                 igbo:
                   summary: Igbo greeting
                   value:
-                    message: "Ndee ewo, Ezinne!"
+                    message: "Ndeewo, Ezinne!"
         '400':
           description: Bad request
           content:

@@ -45,5 +45,5 @@ jobs:
         uses: slackapi/slack-github-action@v1.27.0
         with:
           slack-bot-token: ${{ secrets.SLACK_BOT_TOKEN }}
-          channel-id: 'C01R27LF962'
+          channel-id: 'C01R27LF962' #slack
           text: 'API Documentation updated successfully! View at ${{ github.repository.owner.html_url }}/${{ github.event.repository.name }}'
