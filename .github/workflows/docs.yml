@@ -5,30 +5,45 @@ on:
     branches:
       - main
     paths:
-      - 'spec/openapi.yaml' # Only run when the source spec file changes
+      - 'spec/openapi.yaml'
 
 jobs:
   sync-spec:
     runs-on: ubuntu-latest
-    
-    # Add this permissions block
     permissions:
       contents: write
 
     steps:
-      # Step 1: Checkout the repository's code
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # Step 2: Copy the OpenAPI spec from the 'spec' folder to the 'docs' folder
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Redocly CLI
+        run: npm install -g @redocly/cli
+
+      - name: Validate OpenAPI Spec
+        run: redocly lint spec/openapi.yaml
+
       - name: Sync spec file to docs
         run: cp spec/openapi.yaml docs/openapi.yaml
 
-      # Step 3: Check for changes and commit them back to the main branch
       - name: Commit and push if changed
+        id: auto-commit
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
           commit_message: "docs: Sync openapi.yaml from spec"
           file_pattern: "docs/openapi.yaml"
           commit_user_name: "GitHub Actions Bot"
           commit_user_email: "github-actions@github.com"
+      
+      - name: Notify Slack
+        if: steps.auto-commit.outputs.changes_detected == 'true'
+        uses: slackapi/slack-github-action@v1.27.0
+        with:
+          slack-bot-token: ${{ secrets.SLACK_BOT_TOKEN }}
+          channel-id: 'C01R27LF962'
+          text: 'API Documentation updated successfully! View at ${{ github.repository.owner.html_url }}/${{ github.event.repository.name }}'
